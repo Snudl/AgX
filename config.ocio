@@ -57,6 +57,7 @@ roles:
 displays:
   sRGB:
     - !<View> {name: Standard, colorspace: sRGB}
+    - !<View> {name: Khronos PBR Neutral, colorspace: Khronos PBR Neutral sRGB}
     - !<View> {name: AgX, colorspace: AgX Base sRGB}
     - !<View> {name: Filmic, colorspace: Filmic sRGB}
     - !<View> {name: Filmic Log, colorspace: Filmic Log}
@@ -78,8 +79,8 @@ displays:
     - !<View> {name: False Color, colorspace: AgX False Color Rec.2020}
     - !<View> {name: Raw, colorspace: Non-Color}
 active_displays: [sRGB, Display P3, Rec.1886, Rec.2020]
-active_views: [Standard, AgX, Filmic, Filmic Log, False Color, Raw]
-inactive_colorspaces: [Luminance Compensation Rec.2020, Luminance Compensation sRGB, Luminance Compensation P3, AgX False Color Rec.709, AgX False Color P3, AgX False Color Rec.1886, AgX False Color Rec.2020]
+active_views: [Standard, Khronos PBR Neutral, AgX, Filmic, Filmic Log, False Color, Raw]
+inactive_colorspaces: [Luminance Compensation Rec.2020, Luminance Compensation sRGB, Luminance Compensation P3, AgX False Color Rec.709, AgX False Color P3, AgX False Color Rec.2020]
 
 colorspaces:
   - !<ColorSpace>
@@ -94,7 +95,7 @@ colorspaces:
 
   - !<ColorSpace>
     name: Linear CIE-XYZ D65
-    aliases: [cie_xyz_d65, CIE-XYZ-D65, XYZ, Linear CIE-XYZ I-D65]
+    aliases: [cie_xyz_d65, CIE-XYZ-D65, XYZ, Linear CIE-XYZ I-D65, lin_ciexyzd65_scene]
     family: Chromaticity
     equalitygroup:
     bitdepth: 32f
@@ -105,7 +106,7 @@ colorspaces:
 
   - !<ColorSpace>
     name: Linear Rec.709
-    aliases: [Linear, Linear BT.709, Linear BT.709 I-D65, Linear Tristimulus, linrec709, Utility - Linear - sRGB, Utility - Linear - Rec.709, lin_srgb, Linear Rec.709 (sRGB), lin_rec709_srgb, lin_rec709, lin_srgb, "CGI: Linear - Rec.709"]
+    aliases: [Linear, Linear BT.709, Linear BT.709 I-D65, Linear Tristimulus, linrec709, Utility - Linear - sRGB, Utility - Linear - Rec.709, lin_srgb, Linear Rec.709 (sRGB), lin_rec709_srgb, lin_rec709, lin_srgb, lin_rec709_scene, "CGI: Linear - Rec.709"]
     family: Linear
     equalitygroup:
     bitdepth: 32f
@@ -115,11 +116,11 @@ colorspaces:
     from_scene_reference: !<GroupTransform>
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear CIE-XYZ D65}
-        - !<MatrixTransform> {matrix: [ 3.2410032329763587, -1.5373989694887855, -0.4986158819963629, 0, -0.9692242522025164, 1.8759299836951759, 0.0415542263400847, 0, 0.0556394198519755, -0.2040112061239099, 1.0571489771875333, 0, 0, 0, 0, 1]}
+        - !<MatrixTransform> {matrix: [3.2404373564920070, -1.5371305409000549, -0.4985288240756933, 0, -0.9692674982687597, 1.8760136862977035, 0.0415560804587997, 0, 0.0556434463874256, -0.2040259700872272, 1.0572254813610864, 0, 0, 0, 0, 1]}
 
   - !<ColorSpace>
     name: Linear DCI-P3 D65
-    aliases: [Linear DCI-P3 I-D65, Linear P3-D65, lin_p3d65, Utility - Linear - P3-D65, Apple DCI-P3 D65]
+    aliases: [Linear DCI-P3 I-D65, Linear P3-D65, lin_p3d65, lin_p3d65_scene, Utility - Linear - P3-D65, Apple DCI-P3 D65]
     family: Linear
     equalitygroup:
     bitdepth: 32f
@@ -133,7 +134,7 @@ colorspaces:
 
   - !<ColorSpace>
     name: Linear Rec.2020
-    aliases: [Linear BT.2020 I-D65, Linear BT.2020, lin_rec2020, Utility - Linear - Rec.2020]
+    aliases: [Linear BT.2020 I-D65, Linear BT.2020, lin_rec2020, lin_rec2020_scene, Utility - Linear - Rec.2020]
     family: Linear
     equalitygroup:
     bitdepth: 32f
@@ -147,28 +148,28 @@ colorspaces:
 
   - !<ColorSpace>
     name: ACES2065-1
-    aliases: [Linear ACES, aces2065_1, ACES - ACES2065-1, lin_ap0, "ACES: Linear - AP0"]
+    aliases: [Linear ACES, aces2065_1, ACES - ACES2065-1, lin_ap0, lin_ap0_scene, "ACES: Linear - AP0"]
     family: Linear
     equalitygroup:
     bitdepth: 32f
     description: |
       Linear AP0 with ACES white point
     isdata: false
-    from_reference: !<GroupTransform>
+    from_scene_reference: !<GroupTransform>
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear CIE-XYZ D65}
         - !<BuiltinTransform> {style: "UTILITY - ACES-AP0_to_CIE-XYZ-D65_BFD", direction: inverse}
 
   - !<ColorSpace>
     name: ACEScg
-    aliases: [Linear ACEScg, lin_ap1, ACES - ACEScg, "ACEScg: Linear - AP1"]
+    aliases: [Linear ACEScg, lin_ap1, lin_ap1_scene, ACES - ACEScg, "ACEScg: Linear - AP1"]
     family: Linear
     equalitygroup:
     bitdepth: 32f
     description: |
       Linear AP1 with ACES white point
     isdata: false
-    from_reference: !<GroupTransform>
+    from_scene_reference: !<GroupTransform>
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear CIE-XYZ D65}
         - !<BuiltinTransform> {style: "UTILITY - ACES-AP1_to_CIE-XYZ-D65_BFD", direction: inverse}
@@ -189,7 +190,7 @@ colorspaces:
 
   - !<ColorSpace>
     name: sRGB
-    aliases: [sRGB 2.2, sRGB I-D65, srgb_display, sRGB - Display, g22_rec709, Utility - Gamma 2.2 - Rec.709 - Texture, Utility - sRGB - Texture, sRGB - Texture, srgb_tx, srgb_texture, Input - Generic - sRGB - Texture, "sRGB Display: 2.2 Gamma - Rec.709"]
+    aliases: [sRGB 2.2, sRGB I-D65, srgb_display, srgb_rec709_scene, sRGB - Display, g22_rec709, Utility - Gamma 2.2 - Rec.709 - Texture, Utility - sRGB - Texture, sRGB - Texture, srgb_tx, srgb_texture, Input - Generic - sRGB - Texture, "sRGB Display: 2.2 Gamma - Rec.709"]
     family: Display
     equalitygroup:
     bitdepth: 32f
@@ -227,7 +228,7 @@ colorspaces:
     from_scene_reference: !<GroupTransform>
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear Rec.709}
-        - !<ExponentWithLinearTransform> {gamma: 2.4, offset: 0, direction: inverse}
+        - !<ExponentTransform> {value: 2.4, direction: inverse}
 
   - !<ColorSpace>
     name: Rec.2020
@@ -241,7 +242,7 @@ colorspaces:
     from_scene_reference: !<GroupTransform>
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear Rec.2020}
-        - !<ExponentWithLinearTransform> {gamma: 2.4, offset: 0, direction: inverse}
+        - !<ExponentTransform> {value: 2.4, direction: inverse}
 
   - !<ColorSpace>
     name: Non-Color
@@ -261,7 +262,7 @@ colorspaces:
     description: |
       Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range
     isdata: false
-    from_reference: !<GroupTransform>
+    from_scene_reference: !<GroupTransform>
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear Rec.709}
         - !<AllocationTransform> {allocation: lg2, vars: [-12.473931188, 12.526068812]}
@@ -280,7 +281,7 @@ colorspaces:
     description: |
       sRGB display space with Filmic view transform
     isdata: false
-    from_reference: !<GroupTransform>
+    from_scene_reference: !<GroupTransform>
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Filmic Log}
         - !<FileTransform> {src: filmic_to_0-70_1-03.spi1d, interpolation: linear}
@@ -346,10 +347,8 @@ colorspaces:
     equalitygroup:
     bitdepth: 32f
     description: |
-      Log Encoding with Chroma inset and rotation, and with 25 Stops of Dynamic Range
+      Log Encoding with Chroma inset and rotation of primaries, and with 25 Stops of Dynamic Range
     isdata: false
-    from_reference: !<GroupTransform>
-      children:
     from_scene_reference: !<GroupTransform>
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Luminance Compensation Rec.2020}
@@ -484,6 +483,21 @@ colorspaces:
       children:
         - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: AgX False Color Rec.709}
         - !<ColorSpaceTransform> {src: Rec.1886, dst: Rec.2020}
+
+  - !<ColorSpace>
+    name: Khronos PBR Neutral sRGB
+    family: Khronos PBR Neutral
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      Khronos PBR Neutral Image Encoding for sRGB Display
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear Rec.709}
+        - !<AllocationTransform> {allocation: lg2, vars: [-9, 10]}
+        - !<FileTransform> {src: pbrNeutral.cube, interpolation: tetrahedral}
+        - !<ColorSpaceTransform> {src: Linear Rec.709, dst: sRGB}
 
 looks:
   - !<Look>
