@@ -113,4 +113,29 @@ For exposure-stop range reference, here is the exposure sweep:
    - `Display P3`Display P3 with sRGB piece-wise encoding for reference display
    - `Rec.2020` BT.2020 2.4 Exponent EOTF Display
    - `Non-Color` Generic data that is not color, will not apply any color transform
+ - `AgX Log`
+  Blender AgX Log has a log curve of pure log2, normalized to cover the exposure range from -10 stops to +15 stops.
+  The primaries colorimetry of Blender AgX Log can be interpreted differently based on your use case:
+   - If you are using Blender AgX Log for picture formation:
 
+     In this case, please consider Blender AgX Log as having AgX's mechanism baked in, by assuming it to be in Rec.2020 primaries.
+   - If you are using Blender AgX Log for technical conversion or footage storage, so you want to be able to completely undo Blender AgX Log:
+
+     In this case, you can consider Blender AgX Log has having the below colorimetry specification:
+     
+      `R xy: [0.9838378199, 0.2394126467], G xy: [0.0970499811, 0.9900566739], B xy: [0.1081307578, -0.0323324412] White point D65: [0.3127, 0.3290]`
+
+      Blender AgX Log XYZ to RGB matrix:
+      ```
+       [[ 1.40797 -0.15298 -0.17008]
+       [-0.26999  1.17735  0.07278]
+       [ 0.1552   0.04965  0.73719]]
+      ```
+
+      Blender AgX Log XYZ to RGB matrix = Blender AgX Inset Matrix * Rec.2020 XYZ to RGB matrix.
+      This means the Inset matrix can be isolated by: Blender AgX Log XYZ to RGB matrix * Rec.2020 RGB to XYZ matrix:
+      ```
+       [[ 0.85663  0.09512  0.04825]
+       [ 0.13732  0.76124  0.10144]
+       [ 0.1119   0.0768   0.8113 ]]
+      ```
