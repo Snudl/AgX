@@ -45,7 +45,7 @@ EDIT: This version of AgX has been merged to Blender 4.0 main.
 
 The config includes the following view transform:
 - `Standard` A.K.A `Display's Native` The display device's native colorspace as view transform. Included for compatibility reason.
-- `AgX` The Filmic-like sigmoid based image formation with 16.5 stops of dynamic range.
+- `AgX` The Filmic-like sigmoid based image formation with 16.5 stops of exposure range.
 - `False Color` A heat-map-like imagery derived from `AgX`'s formed image. uses BT.2020's CIE 2012 luminance for luminance coefficients evaluation. 
 
 **False Color ranges**
