@@ -139,3 +139,4 @@ For exposure-stop range reference, here is the exposure sweep:
        [ 0.13732  0.76124  0.10144]
        [ 0.1119   0.0768   0.8113 ]]
       ```
+      The two above matrices are written in row-major fashion.
