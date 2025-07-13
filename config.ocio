@@ -59,6 +59,12 @@ displays:
     - !<View> {name: Standard, colorspace: sRGB}
     - !<View> {name: Khronos PBR Neutral, colorspace: Khronos PBR Neutral sRGB}
     - !<View> {name: AgX, colorspace: AgX Base sRGB}
+    - !<View> {name: AgX HDR 1.5x, colorspace: AgX extended sRGB 1.5x}
+    - !<View> {name: AgX HDR 2x, colorspace: AgX extended sRGB 2x}
+    - !<View> {name: AgX HDR 3x, colorspace: AgX extended sRGB 3x}
+    - !<View> {name: AgX HDR 4x, colorspace: AgX extended sRGB 4x}
+    - !<View> {name: AgX HDR 5x, colorspace: AgX extended sRGB 5x}
+    - !<View> {name: AgX HDR 10x, colorspace: AgX extended sRGB 10x}
     - !<View> {name: Filmic, colorspace: Filmic sRGB}
     - !<View> {name: Filmic Log, colorspace: Filmic Log}
     - !<View> {name: False Color, colorspace: AgX False Color Rec.709}
@@ -78,9 +84,22 @@ displays:
     - !<View> {name: AgX, colorspace: AgX Base Rec.2020}
     - !<View> {name: False Color, colorspace: AgX False Color Rec.2020}
     - !<View> {name: Raw, colorspace: Non-Color}
-active_displays: [sRGB, Display P3, Rec.1886, Rec.2020]
-active_views: [Standard, Khronos PBR Neutral, AgX, Filmic, Filmic Log, False Color, Raw]
-inactive_colorspaces: [Luminance Compensation Rec.2020, AgX False Color Rec.709, AgX False Color P3, AgX False Color Rec.2020]
+  Rec.2100-HLG:
+    - !<View> {name: Standard, colorspace: Rec.2100-HLG}
+    - !<View> {name: AgX, colorspace: AgX SDR Rec.2100-HLG}
+    - !<View> {name: AgX HDR, colorspace: AgX Rec.2100-HLG 1000nits P3-lim}
+    - !<View> {name: False Color, colorspace: AgX False Color Rec.2100-HLG}
+    - !<View> {name: Raw, colorspace: Non-Color}
+  Rec.2100-PQ:
+    - !<View> {name: Standard, colorspace: Rec.2100-PQ}
+    - !<View> {name: AgX, colorspace: AgX SDR Rec.2100-PQ}
+    - !<View> {name: AgX HDR, colorspace: AgX Rec.2100-PQ 1000nit P3-lim}
+    - !<View> {name: False Color, colorspace: AgX False Color Rec.2100-PQ}
+    - !<View> {name: Raw, colorspace: Non-Color}
+
+active_displays: [sRGB, Display P3, Rec.1886, Rec.2020, Rec.2100-HLG, Rec.2100-PQ]
+active_views: [Standard, Khronos PBR Neutral, AgX, AgX HDR, AgX HDR 1.5x, AgX HDR 2x, AgX HDR 3x, AgX HDR 4x, AgX HDR 5x, AgX HDR 10x, Filmic, Filmic Log, False Color, Raw]
+inactive_colorspaces: [Luminance Compensation Rec.2020, AgX False Color Rec.709, AgX False Color P3, AgX False Color Rec.2020, AgX False Color Rec.2100-HLG, AgX False Color Rec.2100-PQ]
 
 colorspaces:
   - !<ColorSpace>
@@ -304,6 +323,44 @@ colorspaces:
         - !<ColorSpaceTransform> {src: Linear FilmLight E-Gamut, dst: Linear Rec.2020}
 
   - !<ColorSpace>
+    name: Luminance Compensation sRGB
+    family: Utilities
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      Offset the negative values in BT.709 and compensate for luminance, ensuring there is no negative values in Rec.709
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<MatrixTransform> {matrix: [0.960599732262383, 0.0196075412762159, 0.019792726461401, 0, 0.0105997322623829, 0.969607541276216, 0.0197927264614012, 0, 0.0105997322623829, 0.0196075412762162, 0.969792726461401, 0, 0, 0, 0, 1]}
+        - !<FileTransform> {src: Guard_Rail_Shaper_EOTF.spi1d, interpolation: linear, direction: inverse}
+        - !<FileTransform> {src: luminance_compensation_srgb.cube, interpolation: tetrahedral}
+        - !<FileTransform> {src: Guard_Rail_Shaper_EOTF.spi1d, interpolation: linear}
+        - !<MatrixTransform> {matrix: [0.960599732262383, 0.0196075412762159, 0.019792726461401, 0, 0.0105997322623829, 0.969607541276216, 0.0197927264614012, 0, 0.0105997322623829, 0.0196075412762162, 0.969792726461401, 0, 0, 0, 0, 1], direction: inverse}
+        - !<ColorSpaceTransform> {src: Linear FilmLight E-Gamut, dst: Linear Rec.709}
+        - !<RangeTransform> {min_in_value: 0, min_out_value: 0}
+
+  - !<ColorSpace>
+    name: Luminance Compensation P3
+    family: Utilities
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      Offset the negative values in P3 and compensate for luminance, ensuring there is no negative values in P3
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<MatrixTransform> {matrix: [0.960599732262383, 0.0196075412762159, 0.019792726461401, 0, 0.0105997322623829, 0.969607541276216, 0.0197927264614012, 0, 0.0105997322623829, 0.0196075412762162, 0.969792726461401, 0, 0, 0, 0, 1]}
+        - !<FileTransform> {src: Guard_Rail_Shaper_EOTF.spi1d, interpolation: linear, direction: inverse}
+        - !<FileTransform> {src: luminance_compensation_p3.cube, interpolation: tetrahedral}
+        - !<FileTransform> {src: Guard_Rail_Shaper_EOTF.spi1d, interpolation: linear}
+        - !<MatrixTransform> {matrix: [0.960599732262383, 0.0196075412762159, 0.019792726461401, 0, 0.0105997322623829, 0.969607541276216, 0.0197927264614012, 0, 0.0105997322623829, 0.0196075412762162, 0.969792726461401, 0, 0, 0, 0, 1], direction: inverse}
+        - !<ColorSpaceTransform> {src: Linear FilmLight E-Gamut, dst: Linear DCI-P3 D65}
+        - !<RangeTransform> {min_in_value: 0, min_out_value: 0}
+
+  - !<ColorSpace>
     name: AgX Log
     family: Log Encodings
     equalitygroup:
@@ -460,6 +517,207 @@ colorspaces:
         - !<AllocationTransform> {allocation: lg2, vars: [-9, 10]}
         - !<FileTransform> {src: pbrNeutral.cube, interpolation: tetrahedral}
         - !<ColorSpaceTransform> {src: Linear Rec.709, dst: sRGB}
+
+  - !<ColorSpace>
+    name: Rec.2100-PQ
+    aliases: [rec2100_pq_display, Rec.2100-PQ - Display, pq_rec2020_display]
+    family: Display
+    equalitygroup: ""
+    bitdepth: 32f
+    description: Rec.2100-PQ 10000 nits peak display with reference white at 100 nits
+    isdata: false
+    categories: [file-io]
+    encoding: hdr-video
+    allocation: uniform
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear CIE-XYZ D65}
+        - !<BuiltinTransform> {style: DISPLAY - CIE-XYZ-D65_to_REC.2100-PQ}
+
+  - !<ColorSpace>
+    name: Rec.2100-HLG
+    aliases: [rec2100_hlg_display, Rec.2100-HLG - Display, hlg_rec2020_display]
+    family: Display
+    equalitygroup: ""
+    bitdepth: 32f
+    description: Rec.2100-HLG 1000 nits peak display with reference white at 100 nits
+    isdata: false
+    categories: [file-io]
+    encoding: hdr-video
+    allocation: uniform
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear CIE-XYZ D65}
+        - !<BuiltinTransform> {style: DISPLAY - CIE-XYZ-D65_to_REC.2100-HLG-1000nit}
+
+  - !<ColorSpace>
+    name: AgX SDR Rec.2100-HLG
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX Base P3 limited Image Encoding for BT.2100-HLG matching SDR
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: AgX Base Display P3}
+        - !<ColorSpaceTransform> {src: Display P3, dst: Rec.2100-HLG}
+
+  - !<ColorSpace>
+    name: AgX SDR Rec.2100-PQ
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX Base P3 limited Image Encoding for BT.2100-PQ matching SDR
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: AgX Base Display P3}
+        - !<ColorSpaceTransform> {src: Display P3, dst: Rec.2100-PQ}
+
+  - !<ColorSpace>
+    name: AgX Rec.2100-HLG 1000nits P3-lim
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX 1000 nits peak Image Encoding for BT.2100-HLG P3 limited Display. Reference white is 100 nits
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+        - !<FileTransform> {src: AgX_Rec2100-HLG_p3_lim.cube, interpolation: tetrahedral}
+
+  - !<ColorSpace>
+    name: AgX Rec.2100-PQ 1000nit P3-lim
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX 1000 nits peak Image Encoding for BT.2100-PQ P3 limited Display. Reference white is 100 nits
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: AgX Rec.2100-HLG 1000nits P3-lim}
+        - !<ColorSpaceTransform> {src: Rec.2100-HLG, dst: Rec.2100-PQ}
+
+  - !<ColorSpace>
+    name: AgX False Color Rec.2100-HLG
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      A heat-map-like image formed from AgX Base for Rec.2100-HLG displays
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: AgX False Color Rec.709}
+        - !<ColorSpaceTransform> {src: Rec.1886, dst: Rec.2100-HLG}
+
+  - !<ColorSpace>
+    name: AgX False Color Rec.2100-PQ
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      A heat-map-like image formed from AgX Base for Rec.2100-PQ displays
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: AgX False Color Rec.709}
+        - !<ColorSpaceTransform> {src: Rec.1886, dst: Rec.2100-PQ}
+
+  - !<ColorSpace>
+    name: AgX extended sRGB 10x
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX 1000 nits peak Image Encoding for floating-point extended non-linear sRGB/scRGB HDR P3 limited Display. Reference white is 100 nits
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+        - !<FileTransform> {src: AgX_Rec2100-HLG_p3_lim.cube, interpolation: tetrahedral}
+        - !<ColorSpaceTransform> {src: Rec.2100-HLG, dst: sRGB}
+
+  - !<ColorSpace>
+    name: AgX extended sRGB 5x
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX 500 nits peak Image Encoding for floating-point extended non-linear sRGB/scRGB HDR P3 limited Display. Reference white is 100 nits
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+        - !<FileTransform> {src: AgX_Rec2100-HLG_p3_lim_5x.cube, interpolation: tetrahedral}
+        - !<ColorSpaceTransform> {src: Rec.2100-HLG, dst: sRGB}
+
+  - !<ColorSpace>
+    name: AgX extended sRGB 4x
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX 400 nits peak Image Encoding for floating-point extended non-linear sRGB/scRGB HDR P3 limited Display. Reference white is 100 nits
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+        - !<FileTransform> {src: AgX_Rec2100-HLG_p3_lim_4x.cube, interpolation: tetrahedral}
+        - !<ColorSpaceTransform> {src: Rec.2100-HLG, dst: sRGB}
+
+  - !<ColorSpace>
+    name: AgX extended sRGB 3x
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX 300 nits peak Image Encoding for floating-point extended non-linear sRGB/scRGB HDR P3 limited Display. Reference white is 100 nits
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+        - !<FileTransform> {src: AgX_Rec2100-HLG_p3_lim_3x.cube, interpolation: tetrahedral}
+        - !<ColorSpaceTransform> {src: Rec.2100-HLG, dst: sRGB}
+
+  - !<ColorSpace>
+    name: AgX extended sRGB 2x
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX 200 nits peak Image Encoding for floating-point extended non-linear sRGB/scRGB HDR P3 limited Display. Reference white is 100 nits
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+        - !<FileTransform> {src: AgX_Rec2100-HLG_p3_lim_2x.cube, interpolation: tetrahedral}
+        - !<ColorSpaceTransform> {src: Rec.2100-HLG, dst: sRGB}
+
+  - !<ColorSpace>
+    name: AgX extended sRGB 1.5x
+    family: AgX
+    equalitygroup:
+    bitdepth: 32f
+    description: |
+      AgX 150 nits peak Image Encoding for floating-point extended non-linear sRGB/scRGB HDR P3 limited Display. Reference white is 100 nits
+    isdata: false
+    from_scene_reference: !<GroupTransform>
+      children:
+        - !<ColorSpaceTransform> {src: Linear CIE-XYZ E, dst: Linear FilmLight E-Gamut}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+        - !<FileTransform> {src: AgX_Rec2100-HLG_p3_lim_1.5x.cube, interpolation: tetrahedral}
+        - !<ColorSpaceTransform> {src: Rec.2100-HLG, dst: sRGB}
 
 looks:
   - !<Look>
@@ -712,6 +970,727 @@ looks:
 
   - !<Look>
     name: False Color - Very Low Contrast
+    process_space: AgX Log
+    description: A Very Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.7, 0.7, 0.7], master: 1}
+          saturation: 1.15
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR - Punchy
+    process_space: AgX Log
+    description: A darkening punchy look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingToneTransform>
+         shadows: {rgb: [0.2, 0.2, 0.2], master: 0.35, start: 0.4, pivot: 0.1}
+        - !<CDLTransform> {power: [1.0912, 1.0912, 1.0912]}
+
+  - !<Look>
+    name: AgX HDR - Greyscale
+    process_space: AgX Log
+    description: A Black and White Look
+    transform: !<GroupTransform>
+      children:
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117], direction: inverse}
+        - !<MatrixTransform> {matrix: [0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0, 0, 0, 1]}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+
+  - !<Look>
+    name: AgX HDR - Very High Contrast
+    process_space: AgX Log
+    description: A Very High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.57, 1.57, 1.57], master: 1}
+          saturation: 0.9
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR - High Contrast
+    process_space: AgX Log
+    description: A High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.4, 1.4, 1.4], master: 1}
+          saturation: 0.95
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR - Medium High Contrast
+    process_space: AgX Log
+    description: A Medium High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.2, 1.2, 1.2], master: 1}
+          saturation: 1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR - Base Contrast
+    process_space: AgX Log
+    description: A Base Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1, 1, 1], master: 1}
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR - Medium Low Contrast
+    process_space: AgX Log
+    description: A Medium Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.9, 0.9, 0.9], master: 1}
+          saturation: 1.05
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR - Low Contrast
+    process_space: AgX Log
+    description: A Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.8, 0.8, 0.8], master: 1}
+          saturation: 1.1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR - Very Low Contrast
+    process_space: AgX Log
+    description: A Very Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.7, 0.7, 0.7], master: 1}
+          saturation: 1.15
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 10x - Punchy
+    process_space: AgX Log
+    description: A darkening punchy look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingToneTransform>
+         shadows: {rgb: [0.2, 0.2, 0.2], master: 0.35, start: 0.4, pivot: 0.1}
+        - !<CDLTransform> {power: [1.0912, 1.0912, 1.0912]}
+
+  - !<Look>
+    name: AgX HDR 10x - Greyscale
+    process_space: AgX Log
+    description: A Black and White Look
+    transform: !<GroupTransform>
+      children:
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117], direction: inverse}
+        - !<MatrixTransform> {matrix: [0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0, 0, 0, 1]}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+
+  - !<Look>
+    name: AgX HDR 10x - Very High Contrast
+    process_space: AgX Log
+    description: A Very High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.57, 1.57, 1.57], master: 1}
+          saturation: 0.9
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 10x - High Contrast
+    process_space: AgX Log
+    description: A High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.4, 1.4, 1.4], master: 1}
+          saturation: 0.95
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 10x - Medium High Contrast
+    process_space: AgX Log
+    description: A Medium High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.2, 1.2, 1.2], master: 1}
+          saturation: 1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 10x - Base Contrast
+    process_space: AgX Log
+    description: A Base Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1, 1, 1], master: 1}
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 10x - Medium Low Contrast
+    process_space: AgX Log
+    description: A Medium Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.9, 0.9, 0.9], master: 1}
+          saturation: 1.05
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 10x - Low Contrast
+    process_space: AgX Log
+    description: A Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.8, 0.8, 0.8], master: 1}
+          saturation: 1.1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 10x - Very Low Contrast
+    process_space: AgX Log
+    description: A Very Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.7, 0.7, 0.7], master: 1}
+          saturation: 1.15
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 5x - Punchy
+    process_space: AgX Log
+    description: A darkening punchy look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingToneTransform>
+         shadows: {rgb: [0.2, 0.2, 0.2], master: 0.35, start: 0.4, pivot: 0.1}
+        - !<CDLTransform> {power: [1.0912, 1.0912, 1.0912]}
+
+  - !<Look>
+    name: AgX HDR 5x - Greyscale
+    process_space: AgX Log
+    description: A Black and White Look
+    transform: !<GroupTransform>
+      children:
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117], direction: inverse}
+        - !<MatrixTransform> {matrix: [0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0, 0, 0, 1]}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+
+  - !<Look>
+    name: AgX HDR 5x - Very High Contrast
+    process_space: AgX Log
+    description: A Very High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.57, 1.57, 1.57], master: 1}
+          saturation: 0.9
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 5x - High Contrast
+    process_space: AgX Log
+    description: A High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.4, 1.4, 1.4], master: 1}
+          saturation: 0.95
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 5x - Medium High Contrast
+    process_space: AgX Log
+    description: A Medium High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.2, 1.2, 1.2], master: 1}
+          saturation: 1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 5x - Base Contrast
+    process_space: AgX Log
+    description: A Base Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1, 1, 1], master: 1}
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 5x - Medium Low Contrast
+    process_space: AgX Log
+    description: A Medium Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.9, 0.9, 0.9], master: 1}
+          saturation: 1.05
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 5x - Low Contrast
+    process_space: AgX Log
+    description: A Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.8, 0.8, 0.8], master: 1}
+          saturation: 1.1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 5x - Very Low Contrast
+    process_space: AgX Log
+    description: A Very Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.7, 0.7, 0.7], master: 1}
+          saturation: 1.15
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 4x - Punchy
+    process_space: AgX Log
+    description: A darkening punchy look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingToneTransform>
+         shadows: {rgb: [0.2, 0.2, 0.2], master: 0.35, start: 0.4, pivot: 0.1}
+        - !<CDLTransform> {power: [1.0912, 1.0912, 1.0912]}
+
+  - !<Look>
+    name: AgX HDR 4x - Greyscale
+    process_space: AgX Log
+    description: A Black and White Look
+    transform: !<GroupTransform>
+      children:
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117], direction: inverse}
+        - !<MatrixTransform> {matrix: [0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0, 0, 0, 1]}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+
+  - !<Look>
+    name: AgX HDR 4x - Very High Contrast
+    process_space: AgX Log
+    description: A Very High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.57, 1.57, 1.57], master: 1}
+          saturation: 0.9
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 4x - High Contrast
+    process_space: AgX Log
+    description: A High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.4, 1.4, 1.4], master: 1}
+          saturation: 0.95
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 4x - Medium High Contrast
+    process_space: AgX Log
+    description: A Medium High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.2, 1.2, 1.2], master: 1}
+          saturation: 1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 4x - Base Contrast
+    process_space: AgX Log
+    description: A Base Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1, 1, 1], master: 1}
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 4x - Medium Low Contrast
+    process_space: AgX Log
+    description: A Medium Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.9, 0.9, 0.9], master: 1}
+          saturation: 1.05
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 4x - Low Contrast
+    process_space: AgX Log
+    description: A Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.8, 0.8, 0.8], master: 1}
+          saturation: 1.1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 4x - Very Low Contrast
+    process_space: AgX Log
+    description: A Very Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.7, 0.7, 0.7], master: 1}
+          saturation: 1.15
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 3x - Punchy
+    process_space: AgX Log
+    description: A darkening punchy look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingToneTransform>
+         shadows: {rgb: [0.2, 0.2, 0.2], master: 0.35, start: 0.4, pivot: 0.1}
+        - !<CDLTransform> {power: [1.0912, 1.0912, 1.0912]}
+
+  - !<Look>
+    name: AgX HDR 3x - Greyscale
+    process_space: AgX Log
+    description: A Black and White Look
+    transform: !<GroupTransform>
+      children:
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117], direction: inverse}
+        - !<MatrixTransform> {matrix: [0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0, 0, 0, 1]}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+
+  - !<Look>
+    name: AgX HDR 3x - Very High Contrast
+    process_space: AgX Log
+    description: A Very High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.57, 1.57, 1.57], master: 1}
+          saturation: 0.9
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 3x - High Contrast
+    process_space: AgX Log
+    description: A High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.4, 1.4, 1.4], master: 1}
+          saturation: 0.95
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 3x - Medium High Contrast
+    process_space: AgX Log
+    description: A Medium High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.2, 1.2, 1.2], master: 1}
+          saturation: 1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 3x - Base Contrast
+    process_space: AgX Log
+    description: A Base Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1, 1, 1], master: 1}
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 3x - Medium Low Contrast
+    process_space: AgX Log
+    description: A Medium Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.9, 0.9, 0.9], master: 1}
+          saturation: 1.05
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 3x - Low Contrast
+    process_space: AgX Log
+    description: A Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.8, 0.8, 0.8], master: 1}
+          saturation: 1.1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 3x - Very Low Contrast
+    process_space: AgX Log
+    description: A Very Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.7, 0.7, 0.7], master: 1}
+          saturation: 1.15
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 2x - Punchy
+    process_space: AgX Log
+    description: A darkening punchy look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingToneTransform>
+         shadows: {rgb: [0.2, 0.2, 0.2], master: 0.35, start: 0.4, pivot: 0.1}
+        - !<CDLTransform> {power: [1.0912, 1.0912, 1.0912]}
+
+  - !<Look>
+    name: AgX HDR 2x - Greyscale
+    process_space: AgX Log
+    description: A Black and White Look
+    transform: !<GroupTransform>
+      children:
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117], direction: inverse}
+        - !<MatrixTransform> {matrix: [0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0, 0, 0, 1]}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+
+  - !<Look>
+    name: AgX HDR 2x - Very High Contrast
+    process_space: AgX Log
+    description: A Very High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.57, 1.57, 1.57], master: 1}
+          saturation: 0.9
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 2x - High Contrast
+    process_space: AgX Log
+    description: A High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.4, 1.4, 1.4], master: 1}
+          saturation: 0.95
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 2x - Medium High Contrast
+    process_space: AgX Log
+    description: A Medium High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.2, 1.2, 1.2], master: 1}
+          saturation: 1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 2x - Base Contrast
+    process_space: AgX Log
+    description: A Base Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1, 1, 1], master: 1}
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 2x - Medium Low Contrast
+    process_space: AgX Log
+    description: A Medium Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.9, 0.9, 0.9], master: 1}
+          saturation: 1.05
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 2x - Low Contrast
+    process_space: AgX Log
+    description: A Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.8, 0.8, 0.8], master: 1}
+          saturation: 1.1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 2x - Very Low Contrast
+    process_space: AgX Log
+    description: A Very Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.7, 0.7, 0.7], master: 1}
+          saturation: 1.15
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 1.5x - Punchy
+    process_space: AgX Log
+    description: A darkening punchy look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingToneTransform>
+         shadows: {rgb: [0.2, 0.2, 0.2], master: 0.35, start: 0.4, pivot: 0.1}
+        - !<CDLTransform> {power: [1.0912, 1.0912, 1.0912]}
+
+  - !<Look>
+    name: AgX HDR 1.5x - Greyscale
+    process_space: AgX Log
+    description: A Black and White Look
+    transform: !<GroupTransform>
+      children:
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117], direction: inverse}
+        - !<MatrixTransform> {matrix: [0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0.2589235355689848, 0.6104985346066525, 0.13057792982436284, 0, 0, 0, 0, 1]}
+        - !<AllocationTransform> {allocation: lg2, vars: [-12.47393, 12.5260688117]}
+
+  - !<Look>
+    name: AgX HDR 1.5x - Very High Contrast
+    process_space: AgX Log
+    description: A Very High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.57, 1.57, 1.57], master: 1}
+          saturation: 0.9
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 1.5x - High Contrast
+    process_space: AgX Log
+    description: A High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.4, 1.4, 1.4], master: 1}
+          saturation: 0.95
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 1.5x - Medium High Contrast
+    process_space: AgX Log
+    description: A Medium High Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1.2, 1.2, 1.2], master: 1}
+          saturation: 1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 1.5x - Base Contrast
+    process_space: AgX Log
+    description: A Base Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [1, 1, 1], master: 1}
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 1.5x - Medium Low Contrast
+    process_space: AgX Log
+    description: A Medium Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.9, 0.9, 0.9], master: 1}
+          saturation: 1.05
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 1.5x - Low Contrast
+    process_space: AgX Log
+    description: A Low Contrast Look
+    transform: !<GroupTransform>
+      children:
+        - !<GradingPrimaryTransform>
+          style: log
+          contrast: {rgb: [0.8, 0.8, 0.8], master: 1}
+          saturation: 1.1
+          pivot: {contrast: -0.2}
+
+  - !<Look>
+    name: AgX HDR 1.5x - Very Low Contrast
     process_space: AgX Log
     description: A Very Low Contrast Look
     transform: !<GroupTransform>
